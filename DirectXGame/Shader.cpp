@@ -26,8 +26,24 @@ void Shader::Load(const std::wstring& filePath, const std::string& shaderModel) 
         assert(false && "Shader compilation failed.");
     }
 
-    // shaderBlob のリソース解放
-    if (shaderBlob) {
-        shaderBlob->Release();
-    }
+    // コンパイル済みデータを保存
+	blob = shaderBlob; // 修正: blob にコンパイル済みデータを保存
+}
+
+// コンパイル済みデータを取得する
+ID3DBlob* Shader::GetBlob() {
+	return blob; // 修正: blob を返す
+}
+
+// コンストラクタ
+Shader::Shader() {
+	// コンストラクタの初期化処理
+}
+
+// デストラクタ
+Shader::~Shader() {
+	if (blob) {
+		blob->Release(); // 修正: blob を解放
+		blob = nullptr;  // 修正: nullptr に設定
+	}
 }
