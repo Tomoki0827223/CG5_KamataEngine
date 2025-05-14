@@ -88,8 +88,13 @@ void Shader::LoadDxc(const std::wstring& filePath, const std::wstring& shaderMod
 	assert(SUCCEEDED(hr));
 
 	// 警告やエラーがあれば表示する
-	IDxcBlobUtf8* errors = nullptr;
+	IDxcBlobUtf8* shadererrors = nullptr;
 	IDxcBlobWide* nameBlob = nullptr;
+	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shadererrors), &nameBlob);
+	if (shadererrors) {
+		OutputDebugStringA((char*)shadererrors->GetBufferPointer());
+		shadererrors->Release();
+	}
 
 
 }
