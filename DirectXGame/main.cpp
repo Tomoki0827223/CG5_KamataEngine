@@ -64,11 +64,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	Shader vs;
-	vs.Load(L"Resources/Shaders/TestVS.hlsl", "vs_5_0");
+	vs.Load(L"Resources/Shaders/TestVS.hlsl", L"vs_5_0");
 	assert(vs.GetBlob() != nullptr);
 
 	Shader ps;
-	ps.Load(L"Resources/Shaders/TestPS.hlsl", "ps_5_0");
+	ps.Load(L"Resources/Shaders/TestPS.hlsl", L"ps_5_0");
 	assert(ps.GetBlob() != nullptr);
 
 	// PSO(PipelineStateObject)の作成-----------------------------------------------------------------------------------------------------------------
