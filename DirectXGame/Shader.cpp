@@ -96,6 +96,16 @@ void Shader::LoadDxc(const std::wstring& filePath, const std::wstring& shaderMod
 		shadererrors->Release();
 	}
 
+	// コンパイル結果を取得する
+	IDxcBlob* shaderBlob = nullptr;
+	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), &nameBlob);
+	assert(SUCCEEDED(hr));
+
+	shadersource->Release();
+	shaderResult->Release();
+
+	dxcBlob_ = shaderBlob;
+
 
 }
 
@@ -117,5 +127,9 @@ Shader::~Shader() {
 	if (blob) {
 		blob->Release(); // 修正: blob を解放
 		blob = nullptr;  // 修正: nullptr に設定
+	}
+	if (dxcBlob_) {
+		dxcBlob_->Release(); // 修正: dxcBlob_ を解放
+		dxcBlob_ = nullptr;  // 修正: nullptr に設定
 	}
 }

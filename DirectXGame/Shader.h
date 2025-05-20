@@ -28,7 +28,7 @@ private:
 
 	ID3DBlob* blob = nullptr; // コンストラクタで初期化しなくていい ※C++11以降
 	
-	IDxcBlob* dxcBlob = nullptr;
+	IDxcBlob* dxcBlob_ = nullptr;
 
 	MiscUtility* miscUtility_ = nullptr;
 };
