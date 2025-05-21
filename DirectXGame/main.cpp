@@ -64,20 +64,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	Shader vs;
-	vs.Load(L"Resources/Shaders/TestVS.hlsl", L"vs_5_0");
-	assert(vs.GetBlob() != nullptr);
+	vs.LoadDxc(L"Resources/Shaders/TestVS.hlsl", L"vs_6_0");
+	assert(vs.GetDxcBlob() != nullptr);	
 
 	Shader ps;
-	ps.Load(L"Resources/Shaders/TestPS.hlsl", L"ps_5_0");
-	assert(ps.GetBlob() != nullptr);
+	ps.LoadDxc(L"Resources/Shaders/TestPS.hlsl", L"ps_6_0");
+	assert(ps.GetDxcBlob() != nullptr);
 
 	// PSO(PipelineStateObject)の作成-----------------------------------------------------------------------------------------------------------------
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignature;
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	graphicsPipelineStateDesc.VS = {vs.GetBlob()->GetBufferPointer(), vs.GetBlob()->GetBufferSize()};
-	graphicsPipelineStateDesc.PS = {ps.GetBlob()->GetBufferPointer(), ps.GetBlob()->GetBufferSize()};
+	graphicsPipelineStateDesc.VS = {vs.GetDxcBlob()->GetBufferPointer(), vs.GetDxcBlob()->GetBufferSize()};
+	graphicsPipelineStateDesc.PS = {ps.GetDxcBlob()->GetBufferPointer(), ps.GetDxcBlob()->GetBufferSize()};
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 	// 書き込むRTVの情報
