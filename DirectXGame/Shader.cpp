@@ -115,7 +115,7 @@ ID3DBlob* Shader::GetBlob() {
 	return blob; // 修正: blob を返す
 }
 
-IDxcBlob* Shader::GetDxcBlob() { return nullptr; }
+IDxcBlob* Shader::GetDxcBlob() { return dxcBlob_; }
 
 // コンストラクタ
 Shader::Shader() {

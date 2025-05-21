@@ -87,4 +87,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\dxcompiler.lib" />
+  </ItemGroup>
 </Project>
