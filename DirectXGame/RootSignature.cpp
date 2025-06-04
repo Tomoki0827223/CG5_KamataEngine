@@ -25,10 +25,11 @@ void RootSignature::Createe()
 
 	// バイナリを基に作成
 	ID3D12RootSignature* rootSignature = nullptr;
-	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), 
+		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
 
-	rootSignature->Release();
+	signatureBlob->Release();
 
 	rootsignature_ = rootSignature;
 }
