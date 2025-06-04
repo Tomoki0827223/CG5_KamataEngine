@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "KamataEngine.h"
+#include "RootSignature.h"
 #include <Windows.h>
 #include <cassert>
 
@@ -25,21 +26,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// DirectXCommonのクラスが管理してる、コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
 
-	// Rootsignatureの取得------------------------------------------------------------------------------------------------------------------------------
-	// 構造体にデータを用意する
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	ID3DBlob* signatureBlob = nullptr;
-	ID3DBlob* errorBlog = nullptr;
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlog);
-	if (FAILED(hr)) {
-		DebugText::GetInstance()->ConsolePrintf(reinterpret_cast<char*>(errorBlog->GetBufferPointer()));
-		assert(false);
-	}
-	// バイナリを基に作成
-	ID3D12RootSignature* rootSignature = nullptr;
-	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	assert(SUCCEEDED(hr));
+	//// Rootsignatureの取得------------------------------------------------------------------------------------------------------------------------------
+	RootSignature rs;
+	rs.Createe();
 
 	// InputLayoutの設定--------------------------------------------------------------------------------------------------------------------------------
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1]{};
@@ -73,7 +62,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// PSO(PipelineStateObject)の作成-----------------------------------------------------------------------------------------------------------------
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature;
+	graphicsPipelineStateDesc.pRootSignature = rs.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	graphicsPipelineStateDesc.VS = {vs.GetDxcBlob()->GetBufferPointer(), vs.GetDxcBlob()->GetBufferSize()};
@@ -90,7 +79,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// PSOの作成
 	ID3D12PipelineState* graphicspipelineState = nullptr;
-	hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicspipelineState));
+	HRESULT hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicspipelineState));
 	if (FAILED(hr)) {
 		DebugText::GetInstance()->ConsolePrintf(std::system_category().message(hr).c_str());
 		assert(false);
@@ -138,7 +127,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// 描画処理
 		dxCommon->PreDraw();
 
-		commandList->SetGraphicsRootSignature(rootSignature);
+		commandList->SetGraphicsRootSignature(rs.Get());
 		commandList->SetPipelineState(graphicspipelineState);
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 		commandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -151,9 +140,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 解放処理
 	vertexResource->Release();
 	graphicspipelineState->Release();
-	signatureBlob->Release();
-
-	rootSignature->Release();
+	
+	//signatureBlob->Release();
+	//rootSignature->Release();
 
 	// 終了処理
 	KamataEngine::Finalize();
