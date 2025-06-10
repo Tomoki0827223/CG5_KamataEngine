@@ -106,6 +106,7 @@ void SetupPipelineState(PipelineState& pipelineState, RootSignature& rs, Shader&
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
+
 	// RasterizerStateの設定----------------------------------------------------------------------------------------------------------------------
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面(反時計回り)を科リングする
