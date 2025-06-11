@@ -3,6 +3,7 @@
 
 #include <d3dx12.h>
 #include <cassert>
+#include "IndexBuffer.h"
 
 using namespace KamataEngine;
 
