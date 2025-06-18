@@ -81,18 +81,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 	ib.Get()->Unmap(0, nullptr);
 
-
-	//// 頂点リソースに書き込む
-	//Vector4* vertexData = nullptr;
-	//// リソースのマッピング
-	//vb.Get()->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	//vertexData[0] = {-0.5f, -0.5f, 0.0f, 1.0f}; // 上
-	//vertexData[1] = {0.0f, 0.5f, 0.0f, 1.0f};   // 右下
-	//vertexData[2] = {0.5f, -0.5f, 0.0f, 1.0f};  // 左下
-	//// アンマップ
-	////vertexResource->Unmap(0, nullptr);
-
-
 	// メインループ
 	while (true) {
 		if (KamataEngine::Update()) {
@@ -113,13 +101,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// 描画処理
 		dxCommon->PostDraw();
 	}
-
-	// 解放処理
-	//vertexResource->Release();
-	//graphicspipelineState->Release();
-	
-	//signatureBlob->Release();
-	//rootSignature->Release();
 
 	// 終了処理
 	KamataEngine::Finalize();
