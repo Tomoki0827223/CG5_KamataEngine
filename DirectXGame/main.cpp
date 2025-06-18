@@ -49,13 +49,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	struct VertexData 
 	{
 		Vector4 position; // 頂点の位置
+		Vector2 texcoord; // テクスチャ座標（今回は使用しないが、将来の拡張のために追加）
 	};
 
-	// 画面全体を覆う巨大な三角形
 	VertexData vertices[] = {
-	    {{-1.0f, -1.0f, 0.0f, 1.0f}}, // 左下
-	    {{-1.0f, 3.0f, 0.0f, 1.0f}},  // 左上より上
-	    {{3.0f, -1.0f, 0.0f, 1.0f}},  // 右下より右
+	    {{-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+	    {{-1.0f, 3.0f, 0.0f, 1.0f},  {0.0f, -1.0f}},
+	    {{3.0f, -1.0f, 0.0f, 1.0f},  {2.0f, 1.0f} },
 	};
 
 	// 頂点バッファの作成
@@ -109,11 +109,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 void SetupPipelineState(PipelineState& pipelineState, RootSignature& rs, Shader& vs, Shader& ps) 
 {
 	// InputLayoutの設定--------------------------------------------------------------------------------------------------------------------------------
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1]{};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs[1].SemanticName = "TEXCOORD";
+	inputElementDescs[1].SemanticIndex = 0;
+	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);

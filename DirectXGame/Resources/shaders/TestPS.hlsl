@@ -1,11 +1,13 @@
-struct PixselShaderOutput
-{
-    float32_t4 color : SV_TARGET0;
-};
+#include "Test.hlsli"
 
-PixselShaderOutput main()
+PixelShaderOutput main(VertexShaderOutput input)
 {
-    PixselShaderOutput output;
-    output.color = float32_t4(1.0, 1.0, 1.0, 1.0);
+    PixelShaderOutput output;
+    
+    float32_t2 uv = input.texcoord;
+    
+    output.color = float32_t4(uv.x, 1.0f - uv.y, 0.0f, 1.0f);
+    
+    
     return output;
 }
