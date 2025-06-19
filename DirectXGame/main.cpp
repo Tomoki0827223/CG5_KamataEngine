@@ -58,6 +58,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	    {{3.0f, -1.0f, 0.0f, 1.0f},  {2.0f, 1.0f} },
 	};
 
+
+
 	// 頂点バッファの作成
 	VertexBuffer vb;
 	vb.Create(sizeof(vertices), sizeof(vertices[0]));
