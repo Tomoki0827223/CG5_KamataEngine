@@ -49,7 +49,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	struct VertexData 
 	{
 		Vector4 position; // 頂点の位置
-		Vector2 texcoord; // テクスチャ座標（今回は使用しないが、将来の拡張のために追加）
+		Vector2 texcoord; // テクスチ
 	};
 
 	VertexData vertices[] = {
@@ -74,8 +74,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// インデックスバッファの作成
 	//uint16_t indices[] = {0, 1, 2};
 	uint16_t indices[] = {
-	    0, 1, 2, // 三角形① 左上・右上・左下
-	    2, 1, 3  // 三角形② 左下・右上・右下
+	    0, 1, 2,
+	    2, 1, 3 
 	};
 	IndexBuffer ib;
 	ib.Create(sizeof(indices), sizeof(indices[0]));
