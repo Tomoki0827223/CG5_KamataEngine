@@ -53,11 +53,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	};
 
 	VertexData vertices[] = {
-	    {{-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-	    {{-1.0f, 3.0f, 0.0f, 1.0f},  {0.0f, -1.0f}},
-	    {{3.0f, -1.0f, 0.0f, 1.0f},  {2.0f, 1.0f} },
+	    {{-1.0f, 1.0f, 0.0f, 1.0f},  {0.0f, 0.0f}}, // 左上
+	    {{1.0f, 1.0f, 0.0f, 1.0f},   {1.0f, 0.0f}}, // 右上
+	    {{-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}, // 左下
+	    {{1.0f, -1.0f, 0.0f, 1.0f},  {1.0f, 1.0f}}, // 右下
 	};
-
 
 
 	// 頂点バッファの作成
@@ -72,7 +72,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vb.Get()->Unmap(0, nullptr);
 
 	// インデックスバッファの作成
-	uint16_t indices[] = {0, 1, 2};
+	//uint16_t indices[] = {0, 1, 2};
+	uint16_t indices[] = {
+	    0, 1, 2, // 三角形① 左上・右上・左下
+	    2, 1, 3  // 三角形② 左下・右上・右下
+	};
 	IndexBuffer ib;
 	ib.Create(sizeof(indices), sizeof(indices[0]));
 

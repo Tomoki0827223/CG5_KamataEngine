@@ -7,7 +7,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     float32_t2 uv = input.texcoord;
     
-    output.color = float32_t4(uv.x, uv.y, 0.0f, 1.0f);///できない
+    output.color = float32_t4(uv.x, uv.y, 0.0f, 1.0f); ///できない
     
     return output;
 }
