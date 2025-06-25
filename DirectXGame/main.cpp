@@ -222,6 +222,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// --- ここにゲームの3Dシーンの描画処理を追加していく ---
 
+
 		// リソースバリア（RTV→SRV）※描画後
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
