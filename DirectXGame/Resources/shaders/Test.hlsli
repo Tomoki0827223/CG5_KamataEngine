@@ -5,11 +5,6 @@ struct VertexShaderOutput
     
 };
 
-struct PixelShaderOutput
-{
-    float32_t4 color : SV_TARGET;
-};
-
 struct VertexShaderInput
 {
     float32_t4 position : POSITION0;
