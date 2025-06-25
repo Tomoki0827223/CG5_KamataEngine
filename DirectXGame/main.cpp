@@ -95,8 +95,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// 0. RenderTextureResourceの作成
 	ID3D12Device* device = dxCommon->GetDevice();
+
 	const FLOAT kRenderTargetClearColor[4] = {1.0f, 0.0f, 0.0f, 1.0f}; // 例: 赤
-	ID3D12Resource* renderTextureResource = CreateRenderTextureResource(device, w, h, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearColor);
+	
+	ID3D12Resource* renderTextureResource = CreateRenderTextureResource(device, WinApp::kWindowWidth, WinApp::kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearColor);
 
 	// 1. RTV用のDescriptorHeapを作成する
 	ID3D12DescriptorHeap* rtvDescriptorHeap = nullptr;
@@ -113,7 +115,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	device->CreateRenderTargetView(renderTextureResource, nullptr, rtvHandleCPU);
 
 	// 0. DepthStencilTextureResourceの作成
-	ID3D12Resource* depthStencilResource = CreateDepthStencilTextureResource(device, w, h);
+	ID3D12Resource* depthStencilResource = CreateDepthStencilTextureResource(device, WinApp::kWindowWidth, WinApp::kWindowHeight);
 
 	// 1. DSV用のDescriptorHeapを作成する
 	ID3D12DescriptorHeap* dsvDescriptorHeap = nullptr;
@@ -161,7 +163,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 
 		// 描画処理
-		dxCommon->PreDraw();
+		
 
 		// ===== ここから追加 =====
 		
@@ -174,6 +176,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		commandList->ResourceBarrier(1, &barrier);
 
+		// 描画先のRTVとDSVを設定
+		commandList->OMSetRenderTargets(1, &rtvHandleCPU, false, &dsvHandleCPU);
+
 		// Viewportの設定
 		D3D12_VIEWPORT viewport{};
 		viewport.Width = WinApp::kWindowWidth;
@@ -184,9 +189,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		viewport.MaxDepth = 1.0f;
 		commandList->RSSetViewports(1, &viewport);
 
-		// 描画先のRTVとDSVを設定
-		commandList->OMSetRenderTargets(1, &rtvHandleCPU, false, &dsvHandleCPU);
 
+		dxCommon->PreDraw();
 		// ===== ここまで追加 =====
 
 		// Scissorの設定
@@ -195,29 +199,26 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		scissorRect.right = WinApp::kWindowWidth;
 		scissorRect.top = 0;
 		scissorRect.bottom = WinApp::kWindowHeight;
+		
 		commandList->RSSetScissorRects(1, &scissorRect);
-
 		// 全画面クリア
 		commandList->ClearRenderTargetView(rtvHandleCPU, kRenderTargetClearColor, 0, nullptr);
-
 		// 深度バッファのクリア
 		commandList->ClearDepthStencilView(dsvHandleCPU, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 		// --- ここから描画コマンド ---
-		// ルートシグネチャの設定を先に行う
 		commandList->SetGraphicsRootSignature(rs.Get());
-
-		// ディスクリプタヒープの設定
-		commandList->SetDescriptorHeaps(1, &srvDescriptorHeap);
-
-		// SRVのDescriptorTableの先頭を設定（rootParameter[0]）
-		commandList->SetGraphicsRootDescriptorTable(0, srvHandleGPU);
-
 		// 以下、パイプラインステートやバッファの設定
 		commandList->SetPipelineState(pipelineState.Get());
+
 		commandList->IASetVertexBuffers(0, 1, vb.GetView());
 		commandList->IASetIndexBuffer(ib.GetView());
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		// ディスクリプタヒープの設定
+		commandList->SetDescriptorHeaps(srvDescriptorHeap->GetDesc().NumDescriptors, &srvDescriptorHeap);
+		// SRVのDescriptorTableの先頭を設定（rootParameter[0]）
+		commandList->SetGraphicsRootDescriptorTable(0, srvHandleGPU);
 		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
 		// --- ここにゲームの3Dシーンの描画処理を追加していく ---
