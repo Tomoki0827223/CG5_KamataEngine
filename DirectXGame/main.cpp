@@ -162,12 +162,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 
-		// 描画処理
-		
-
-		// ===== ここから追加 =====
-		
-		// リソースバリア（SRV→RTV）
 		D3D12_RESOURCE_BARRIER barrier{};
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -176,7 +170,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		commandList->ResourceBarrier(1, &barrier);
 
-		// 描画先のRTVとDSVを設定
+		// 描画先のR
 		commandList->OMSetRenderTargets(1, &rtvHandleCPU, false, &dsvHandleCPU);
 
 		// Viewportの設定
@@ -189,53 +183,55 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		viewport.MaxDepth = 1.0f;
 		commandList->RSSetViewports(1, &viewport);
 
-		// Scissorの設定
+		// ScissorRectの設定
 		D3D12_RECT scissorRect{};
+		// 基本的にビューポートと同じ矩形が構成されるようにする
 		scissorRect.left = 0;
 		scissorRect.right = WinApp::kWindowWidth;
 		scissorRect.top = 0;
 		scissorRect.bottom = WinApp::kWindowHeight;
-
-		
 		commandList->RSSetScissorRects(1, &scissorRect);
-		// 全画面クリア
+
+		// 全画面
 		commandList->ClearRenderTargetView(rtvHandleCPU, kRenderTargetClearColor, 0, nullptr);
-		// 深度バッファのクリア
+		// 指定した深度で画面全体をクリアする
 		commandList->ClearDepthStencilView(dsvHandleCPU, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 		dxCommon->PreDraw();
-		// ===== ここまで追加 =====
-		
-		// --- ここから描画コマンド ---
-		commandList->SetGraphicsRootSignature(rs.Get());
+
+		// コマンドを積む
+		commandList->SetGraphicsRootSignature(rs.Get()); 
 		commandList->SetPipelineState(pipelineState.Get());
 
 		commandList->IASetVertexBuffers(0, 1, vb.GetView());
 		commandList->IASetIndexBuffer(ib.GetView());
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// ディスクリプタヒープの設定
+		// 使用するディスクリプタヒープの設定
 		commandList->SetDescriptorHeaps(srvDescriptorHeap->GetDesc().NumDescriptors, &srvDescriptorHeap);
-		// SRVのDescriptorTableの先頭を設定（rootParameter[0]）
+
+		// SRVのDescripterTableの先頭を設定
 		commandList->SetGraphicsRootDescriptorTable(0, srvHandleGPU);
+
+		// 画面を覆うポリゴンの描画
 		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
 		std::swap(barrier.Transition.StateBefore, barrier.Transition.StateAfter);
 		commandList->ResourceBarrier(1, &barrier);
 
-		// 描画処理
 		dxCommon->PostDraw();
 	}
 
-	renderTextureResource->Release(); // RenderTextureResourceの解放
-	depthStencilResource->Release();  // DepthStencilResourceの解放
-	
-	rtvDescriptorHeap->Release();     // RTV用のDescriptorHeapの解放
-	dsvDescriptorHeap->Release();     // DSV用のDescriptorHeapの解放
-	srvDescriptorHeap->Release();     // SRV用のDescriptorHeapの解放
+	renderTextureResource->Release();
+	srvDescriptorHeap->Release();
+	rtvDescriptorHeap->Release();
 
-	// 終了処理
+	depthStencilResource->Release();
+	dsvDescriptorHeap->Release();
+
 	KamataEngine::Finalize();
+
+	return 0;
 }
 
 void SetupPipelineState(PipelineState& pipelineState, RootSignature& rs, Shader& vs, Shader& ps) 
