@@ -208,7 +208,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		
 		// --- ここから描画コマンド ---
 		commandList->SetGraphicsRootSignature(rs.Get());
-		// 以下、パイプラインステートやバッファの設定
 		commandList->SetPipelineState(pipelineState.Get());
 
 		commandList->IASetVertexBuffers(0, 1, vb.GetView());
@@ -221,18 +220,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->SetGraphicsRootDescriptorTable(0, srvHandleGPU);
 		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
-		// 描画処理
-		dxCommon->PostDraw();
-
-		// リソースバリア（RTV→SRV）※描画後
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = renderTextureResource;
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		std::swap(barrier.Transition.StateBefore, barrier.Transition.StateAfter);
 		commandList->ResourceBarrier(1, &barrier);
 
+		// 描画処理
+		dxCommon->PostDraw();
 	}
+
 	renderTextureResource->Release(); // RenderTextureResourceの解放
 	depthStencilResource->Release();  // DepthStencilResourceの解放
 	
