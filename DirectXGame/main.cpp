@@ -197,15 +197,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		scissorRect.bottom = WinApp::kWindowHeight;
 
 		
-		dxCommon->PreDraw();
-		// ===== ここまで追加 =====
-		
 		commandList->RSSetScissorRects(1, &scissorRect);
 		// 全画面クリア
 		commandList->ClearRenderTargetView(rtvHandleCPU, kRenderTargetClearColor, 0, nullptr);
 		// 深度バッファのクリア
 		commandList->ClearDepthStencilView(dsvHandleCPU, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
+		dxCommon->PreDraw();
+		// ===== ここまで追加 =====
+		
 		// --- ここから描画コマンド ---
 		commandList->SetGraphicsRootSignature(rs.Get());
 		// 以下、パイプラインステートやバッファの設定
