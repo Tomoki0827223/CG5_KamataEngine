@@ -189,16 +189,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		viewport.MaxDepth = 1.0f;
 		commandList->RSSetViewports(1, &viewport);
 
-
-		dxCommon->PreDraw();
-		// ===== ここまで追加 =====
-
 		// Scissorの設定
 		D3D12_RECT scissorRect{};
 		scissorRect.left = 0;
 		scissorRect.right = WinApp::kWindowWidth;
 		scissorRect.top = 0;
 		scissorRect.bottom = WinApp::kWindowHeight;
+
+		
+		dxCommon->PreDraw();
+		// ===== ここまで追加 =====
 		
 		commandList->RSSetScissorRects(1, &scissorRect);
 		// 全画面クリア
@@ -221,8 +221,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->SetGraphicsRootDescriptorTable(0, srvHandleGPU);
 		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
-		// --- ここにゲームの3Dシーンの描画処理を追加していく ---
-
+		// 描画処理
+		dxCommon->PostDraw();
 
 		// リソースバリア（RTV→SRV）※描画後
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -232,8 +232,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 		commandList->ResourceBarrier(1, &barrier);
 
-		// 描画処理
-		dxCommon->PostDraw();
 	}
 	renderTextureResource->Release(); // RenderTextureResourceの解放
 	depthStencilResource->Release();  // DepthStencilResourceの解放
