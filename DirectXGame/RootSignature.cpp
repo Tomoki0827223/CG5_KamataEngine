@@ -1,6 +1,7 @@
 #include "RootSignature.h"
 #include "KamataEngine.h"
 #include "PipelineState.h"
+#include <cassert>
 
 using namespace KamataEngine;
 

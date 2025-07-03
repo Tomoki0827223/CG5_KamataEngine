@@ -34,6 +34,15 @@ void IndexBuffer::Create(const UINT size, const UINT stride)
 	HRESULT hr = dxcommon->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &indexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&indexResource));
 	assert(SUCCEEDED(hr));
 
+	#if defined(_DEBUG)
+	assert(SUCCEEDED(hr));
+#else
+	if (FAILED(hr)) {
+		// 必要に応じてエラーハンドリング
+		return;
+	}
+#endif
+
 	indexBuffer_ = indexResource;
 
 	// VERTEX_BUFFER_VIEWの作成@------------------------------------------------------------------------------------------------

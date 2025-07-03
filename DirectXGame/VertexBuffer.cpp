@@ -1,14 +1,13 @@
 #include "VertexBuffer.h"
 #include "KamataEngine.h"
 
-#include <d3dx12.h>
-#include <cassert>
 #include "IndexBuffer.h"
+#include <cassert>
+#include <d3dx12.h>
 
 using namespace KamataEngine;
 
-void VertexBuffer::Create(const UINT size, const UINT stride) 
-{ 
+void VertexBuffer::Create(const UINT size, const UINT stride) {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	// vertexResourceの作成------------------------------------------------------------------------------------------------
@@ -29,10 +28,18 @@ void VertexBuffer::Create(const UINT size, const UINT stride)
 	// 実際に頂点リソースを作成
 	ID3D12Resource* vertexResource = nullptr;
 	HRESULT hr = dxCommon->GetDevice()->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource));
+
+#if defined(_DEBUG)
 	assert(SUCCEEDED(hr));
-	
+#else
+	if (FAILED(hr)) {
+		// 必要に応じてエラーハンドリング
+		return;
+	}
+#endif
+
 	vertexBuffer_ = vertexResource;
-	
+
 	// VERTEX_BUFFER_VIEWの作成@------------------------------------------------------------------------------------------------
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
@@ -47,8 +54,7 @@ D3D12_VERTEX_BUFFER_VIEW* VertexBuffer::GetView() { return &vertexBufferView_; }
 
 VertexBuffer::VertexBuffer() {}
 
-VertexBuffer::~VertexBuffer() 
-{
+VertexBuffer::~VertexBuffer() {
 	if (vertexBuffer_) {
 		vertexBuffer_->Release();
 		vertexBuffer_ = nullptr;

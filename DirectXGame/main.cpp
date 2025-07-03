@@ -359,8 +359,19 @@ ID3D12Resource* CreateRenderTextureResource(ID3D12Device* device, uint32_t width
 	ID3D12Resource* resource = nullptr;
 	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
+
+#if defined(_DEBUG)
+	assert(SUCCEEDED(hr));
+#else
+	if (FAILED(hr)) {
+		// 必要に応じてエラーハンドリング
+		return nullptr;
+	}
+#endif
+
 	return resource;
 }
+
 
 ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height) {
 	// 1. Descの設定
@@ -387,5 +398,15 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	ID3D12Resource* resource = nullptr;
 	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
+	
+	#if defined(_DEBUG)
+	assert(SUCCEEDED(hr));
+#else
+	if (FAILED(hr)) {
+		// 必要に応じてエラーハンドリング
+		return nullptr;
+	}
+#endif
+
 	return resource;
 }
