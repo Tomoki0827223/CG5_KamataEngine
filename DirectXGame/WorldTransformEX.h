@@ -1,5 +1,5 @@
 #pragma once
-#include "C:\Users\dscka\Documents\ProjectFile\CG5\CG5_KamataEngine\External\KamataEngine\include\3d\WorldTransform.h"
+#include "3d\WorldTransform.h"
 #include "KamataEngine.h"
 
 class WorldTransformEX : 
